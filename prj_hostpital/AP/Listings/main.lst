@@ -1,0 +1,215 @@
+C51 COMPILER V9.59.0.0   MAIN                                                              10/08/2019 12:53:15 PAGE 1   
+
+
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\SRC) DEBUG OBJECTEXTEND PRINT(.
+                    -\Listings\main.lst) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include <reg52.h>
+   2          #include "oled.h"
+   3          #include "uart.h"
+   4          unsigned int countTime=0;
+   5          unsigned char onlineStatus[]="00";
+   6          void delay(unsigned int i)
+   7          {
+   8   1              while(i--);
+   9   1      }
+  10          void showTitle()
+  11          {
+  12   1              unsigned char offset=10;
+  13   1              unsigned char line=0;
+  14   1              /*病房叫号系统*/
+  15   1              OLED_ShowCHinese(offset+0,line,0);
+  16   1              OLED_ShowCHinese(offset+18,line,1);
+  17   1              OLED_ShowCHinese(offset+36,line,2);
+  18   1              OLED_ShowCHinese(offset+54,line,3);
+  19   1              OLED_ShowCHinese(offset+72,line,4);
+  20   1              OLED_ShowCHinese(offset+90,line,5);
+  21   1              
+  22   1              /*名称*/
+  23   1              offset=0;
+  24   1              line=2;
+  25   1              OLED_ShowCHinese(offset+10,line,13);
+  26   1              OLED_ShowCHinese(offset+28,line,14);
+  27   1      
+  28   1              /*连接*/
+  29   1              offset=0;
+  30   1              line=2;
+  31   1              OLED_ShowCHinese(offset+54,line,7);
+  32   1              OLED_ShowCHinese(offset+72,line,8);
+  33   1              
+  34   1              /*呼叫*/
+  35   1              offset=0;
+  36   1              line=2;
+  37   1              OLED_ShowCHinese(offset+96,line,2);
+  38   1              OLED_ShowCHinese(offset+112,line,3);
+  39   1              
+  40   1              /*num号床*/
+  41   1              line=4;
+  42   1              offset=0;
+  43   1              OLED_ShowNum(offset+0,line,1,1,16);
+  44   1              OLED_ShowCHinese(offset+18,line,11);
+  45   1              OLED_ShowCHinese(offset+36,line,12);
+  46   1              
+  47   1              /*num号床*/
+  48   1              line=6;
+  49   1              offset=0;
+  50   1              OLED_ShowNum(offset+0,line,2,1,16);
+  51   1              OLED_ShowCHinese(offset+18,line,11);
+  52   1              OLED_ShowCHinese(offset+36,line,12);
+  53   1      }
+  54          void ShowOline(unsigned char i)
+C51 COMPILER V9.59.0.0   MAIN                                                              10/08/2019 12:53:15 PAGE 2   
+
+  55          {
+  56   1              unsigned char offset=62;
+  57   1              unsigned char line=0;
+  58   1              if(i==1){
+  59   2                      line=4;
+  60   2                      OLED_ShowCHinese(offset,line,15);
+  61   2              }
+  62   1              else if(i==2){
+  63   2                      line=6;
+  64   2                      OLED_ShowCHinese(offset,line,15);
+  65   2              }
+  66   1      }
+  67          void ShowDisOline(unsigned char i)
+  68          {
+  69   1              unsigned char offset=62;
+  70   1              unsigned char line=0;
+  71   1              if(i==1){
+  72   2                      line=4;
+  73   2                      OLED_ShowCHinese(offset,line,16);
+  74   2              }
+  75   1              else if(i==2){
+  76   2                      line=6;
+  77   2                      OLED_ShowCHinese(offset,line,16);
+  78   2              }
+  79   1      }
+  80          void setBlack(unsigned char i)
+  81          {
+  82   1              unsigned char offset=104;
+  83   1              unsigned char line=0;
+  84   1              if(i==1){
+  85   2                      line=4;
+  86   2                      OLED_ShowCHinese(offset,line,17);
+  87   2              }
+  88   1              else if(i==2){
+  89   2                      line=6;
+  90   2                      OLED_ShowCHinese(offset,line,17);
+  91   2              }
+  92   1      }
+  93          void clearBlack(unsigned char i)
+  94          {
+  95   1              unsigned char offset=104;
+  96   1              unsigned char line=0;
+  97   1              if(i==1){
+  98   2                      line=4;
+  99   2                      OLED_ShowCHinese(offset,line,18);
+ 100   2              }
+ 101   1              else if(i==2){
+ 102   2                      line=6;
+ 103   2                      OLED_ShowCHinese(offset,line,18);
+ 104   2              }
+ 105   1      }
+ 106          
+ 107          void uartDel(unsigned char dat)
+ 108          {
+ 109   1              if(dat==0x10)//1床号码
+ 110   1              {
+ 111   2                      ShowOline(1);//显示在线，打钩
+ 112   2                      onlineStatus[0]='1';
+ 113   2              }else if(dat==0x20)//2床号码
+ 114   1              {
+ 115   2                      ShowOline(2);//显示在线，打钩
+ 116   2                      onlineStatus[1]='1';
+C51 COMPILER V9.59.0.0   MAIN                                                              10/08/2019 12:53:15 PAGE 3   
+
+ 117   2              }
+ 118   1              else if(dat==0x11)
+ 119   1              {
+ 120   2                      ShowOline(1);//显示在线，打钩
+ 121   2                      onlineStatus[0]='1';
+ 122   2                      setBlack(1);
+ 123   2                      LED=0;
+ 124   2                      BEEP=0;
+ 125   2              }else if(dat==0x21)
+ 126   1              {
+ 127   2                      ShowOline(2);//显示在线，打钩
+ 128   2                      onlineStatus[1]='1';
+ 129   2                      setBlack(2);
+ 130   2                      LED=0;
+ 131   2                      BEEP=0;
+ 132   2              }
+ 133   1      
+ 134   1      }
+ 135          void main(void)
+ 136          {
+ 137   1          InitUART();
+ 138   1              OLED_Init();//初始化OLED  
+ 139   1              OLED_Clear(); 
+ 140   1              showTitle();
+ 141   1              ShowDisOline(1);
+ 142   1              ShowDisOline(2);
+ 143   1              while(1)
+ 144   1              {
+ 145   2                      countTime++;
+ 146   2                      if(countTime==50000)//大概5秒
+ 147   2                      {
+ 148   3                              countTime=0;
+ 149   3                              if(onlineStatus[0]=='0')
+ 150   3                              {
+ 151   4                                      ShowDisOline(1);
+ 152   4                              }
+ 153   3                              if(onlineStatus[1]=='0')
+ 154   3                              {
+ 155   4                                      ShowDisOline(2);
+ 156   4                              }
+ 157   3                              onlineStatus[0]='0';
+ 158   3                              onlineStatus[1]='0';
+ 159   3                              
+ 160   3                      }
+ 161   2                      if(KEY==0)
+ 162   2                      {
+ 163   3                              delay(100);
+ 164   3                              if(KEY==0)
+ 165   3                              {
+ 166   4                                      LED=1;
+ 167   4                                      BEEP=1;
+ 168   4                                      clearBlack(1);
+ 169   4                                      clearBlack(2);
+ 170   4                                      SendOneByte(0xf0);
+ 171   4                                      SendString("\r\n",2);
+ 172   4                                      delay(10000);
+ 173   4                                      SendOneByte(0xf0);
+ 174   4                                      SendString("\r\n",2);
+ 175   4                                      delay(10000);
+ 176   4                                      SendOneByte(0xf0);
+ 177   4                                      SendString("\r\n",2);
+ 178   4                                      delay(10000);
+C51 COMPILER V9.59.0.0   MAIN                                                              10/08/2019 12:53:15 PAGE 4   
+
+ 179   4                                      SendOneByte(0xf0);
+ 180   4                                      SendString("\r\n",2);
+ 181   4                              }
+ 182   3                              while(KEY==0);
+ 183   3                      }
+ 184   2              }
+ 185   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    678    ----
+   CONSTANT SIZE    =      3    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      5      15
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

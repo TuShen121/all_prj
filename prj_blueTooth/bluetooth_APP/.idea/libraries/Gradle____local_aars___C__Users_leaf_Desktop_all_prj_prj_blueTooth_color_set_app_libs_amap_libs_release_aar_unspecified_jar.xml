@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Gradle: __local_aars__:C.\Users\leaf\Desktop\all_prj\prj_blueTooth\color_set\app\libs\amap-libs-release.aar:unspecified@jar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/amap-libs-release.aar/70bd7921e33c64cca39ba914445cc38a/jars/classes.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/amap-libs-release.aar/70bd7921e33c64cca39ba914445cc38a/jars/libs/AMap_Location_V4.2.0_20180809.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/amap-libs-release.aar/70bd7921e33c64cca39ba914445cc38a/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/amap-libs-release.aar/70bd7921e33c64cca39ba914445cc38a/jars/libs/Android_Map3D_SDK_V6.4.1_20180906.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/amap-libs-release.aar/70bd7921e33c64cca39ba914445cc38a/jars/libs/AMap_Search_V6.1.0_20180330.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

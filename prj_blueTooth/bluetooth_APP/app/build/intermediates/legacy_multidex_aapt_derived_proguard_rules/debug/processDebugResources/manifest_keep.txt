@@ -1,0 +1,4 @@
+# Referenced at C:\Users\leaf\Desktop\all_prj\prj_blueTooth\color_set\app\build\intermediates\merged_manifests\debug\AndroidManifest.xml:184
+-keep class io.dcloud.application.DCloudApplication { <init>(); }
+# Referenced at C:\Users\leaf\Desktop\all_prj\prj_blueTooth\color_set\app\build\intermediates\merged_manifests\debug\AndroidManifest.xml:711
+-keep class io.dcloud.multiprocess.activity.WebAppActivity1 { <init>(); }

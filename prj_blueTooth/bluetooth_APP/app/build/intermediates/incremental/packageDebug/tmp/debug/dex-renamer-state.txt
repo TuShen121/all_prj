@@ -1,0 +1,10 @@
+#Wed Oct 16 15:28:36 CST 2019
+path.2=classes2.dex
+path.1=classes.dex
+path.0=classes.dex
+renamed.2=classes3.dex
+renamed.1=classes2.dex
+renamed.0=classes.dex
+base.2=C\:\\Users\\leaf\\Desktop\\all_prj\\prj_blueTooth\\color_set\\app\\build\\intermediates\\dex\\debug\\mergeExtDexDebug\\out
+base.1=C\:\\Users\\leaf\\Desktop\\all_prj\\prj_blueTooth\\color_set\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\out
+base.0=C\:\\Users\\leaf\\Desktop\\all_prj\\prj_blueTooth\\color_set\\app\\build\\intermediates\\dex\\debug\\mergeExtDexDebug\\out

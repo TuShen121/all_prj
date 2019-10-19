@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: __local_aars__:C.\Users\leaf\Desktop\all_prj\prj_blueTooth\color_set\app\libs\payment-alipay-release.aar:unspecified@jar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/payment-alipay-release.aar/293b62ad15bd645b7d8d0917e2f3436e/jars/libs/alipaySingle-20161222.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/payment-alipay-release.aar/293b62ad15bd645b7d8d0917e2f3436e/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/payment-alipay-release.aar/293b62ad15bd645b7d8d0917e2f3436e/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

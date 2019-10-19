@@ -1,0 +1,4 @@
+# Referenced at C:\Users\leaf\Desktop\prj_color\color_set\app\build\intermediates\merged_manifests\release\AndroidManifest.xml:175
+-keep class io.dcloud.application.DCloudApplication { <init>(); }
+# Referenced at C:\Users\leaf\Desktop\prj_color\color_set\app\build\intermediates\merged_manifests\release\AndroidManifest.xml:700
+-keep class io.dcloud.multiprocess.activity.WebAppActivity1 { <init>(); }

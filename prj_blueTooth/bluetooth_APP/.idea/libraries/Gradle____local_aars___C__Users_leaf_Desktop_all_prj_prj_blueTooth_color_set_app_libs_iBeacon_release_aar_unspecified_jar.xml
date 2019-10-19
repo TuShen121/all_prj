@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="Gradle: __local_aars__:C.\Users\leaf\Desktop\all_prj\prj_blueTooth\color_set\app\libs\iBeacon-release.aar:unspecified@jar">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/iBeacon-release.aar/541c53e7f330a377896cc6fdd1962a47/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/iBeacon-release.aar/541c53e7f330a377896cc6fdd1962a47/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

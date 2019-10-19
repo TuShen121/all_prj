@@ -1,0 +1,7 @@
+".\Objects\main.obj",
+".\Objects\servo.obj",
+".\Objects\oled.obj",
+".\Objects\echo.obj",
+".\Objects\ds18b20.obj" 
+TO ".\Objects\test" 
+PRINT(".\Listings\test.m51") RAMSIZE(256) 

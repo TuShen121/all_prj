@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: __local_aars__:C.\Users\leaf\Desktop\all_prj\prj_blueTooth\color_set\app\libs\speech_ifly-release.aar:unspecified@jar">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/speech_ifly-release.aar/47c1ed6097b16a6dcb888de513c002ed/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/speech_ifly-release.aar/47c1ed6097b16a6dcb888de513c002ed/jars/libs/Msc.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/speech_ifly-release.aar/47c1ed6097b16a6dcb888de513c002ed/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

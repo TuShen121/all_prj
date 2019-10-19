@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: __local_aars__:C.\Users\leaf\Desktop\all_prj\prj_blueTooth\color_set\app\libs\sina-libs-release.aar:unspecified@jar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/sina-libs-release.aar/702140da1fd98dd5d72058ed99b8a766/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/sina-libs-release.aar/702140da1fd98dd5d72058ed99b8a766/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/sina-libs-release.aar/702140da1fd98dd5d72058ed99b8a766/jars/libs/sinaweibo4.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

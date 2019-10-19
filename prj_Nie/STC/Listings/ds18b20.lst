@@ -1,0 +1,190 @@
+C51 COMPILER V9.59.0.0   DS18B20                                                           10/19/2019 18:41:25 PAGE 1   
+
+
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE DS18B20
+OBJECT MODULE PLACED IN .\Objects\ds18b20.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ds18b20.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\SRC) DEBUG OBJECTEXTEND PRIN
+                    -T(.\Listings\ds18b20.lst) OBJECT(.\Objects\ds18b20.obj)
+
+line level    source
+
+   1          #include "ds18b20.h"
+   2          //ÎÂ¶ÈÏÔÊ¾³ÌĞò==LEDÏÔÊ¾£¬¾«¶È0.1ÉãÊÏ¶È
+   3          //¾§Õñ:12M
+   4          //µ¥Æ¬»ú£ºstc12c5a60s2   1T
+   5          /******************************************
+   6          ÌøÏßÉèÖÃ:Ä¬ÈÏ
+   7          ×¢ÒâÊÂÏî:ds18b20ÇĞÎğ²å·´£¬ÓĞ±¬Õ¨ÌÌÉËµÄÎ£ÏÕ£¬·½ÏòÊÇds18b20µÄÆ½Ãæ£¨ÓĞ×ÖµÄÒ»Ãæ£©³¯ÅÔ±ßµÄÈı¼«¹ÜQ4
+   8          ***/
+   9          #include <reg51.h>
+  10          #include <intrins.h>
+  11          #include "config.h"
+  12          #define uchar unsigned char
+  13          #define uint unsigned int
+  14          unsigned char delayFlag=0;
+  15          unsigned char i=2;
+  16          //Êı¾İ¿Údefine interface
+  17          
+  18          
+  19          
+  20          uint wendu;                //ÎÂ¶ÈÖµ variable of wenduerature
+  21          
+  22          //²»´øĞ¡Êıµã
+  23          unsigned char code table[] = {0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,
+  24                   0x07,0x7f,0x6f,0x77,0x7c,0x39,0x5e,0x79,0x71};
+  25          //´øĞ¡Êıµã
+  26          unsigned char code table1[] = {0xbf,0x86,0xdb,0xcf,0xe6,0xed,0xfd,0x87,0xff,0xef};
+  27          
+  28          
+  29          /*************¾«È·ÑÓÊ±º¯Êı**************** */
+  30          //                          Êı¾İ±íÈçÏÂ
+  31          /*
+  32          **********************************************************************************************************
+             -**********
+  33          ÑÓÊ±Ê±¼ä      aµÄÖµ     bµÄÖµ       cµÄÖµ     ÑÓÊ±Îó²î£¨us£©
+  34          10us          1           1           1            -0.5    
+  35          20us          1           1           8            0  
+  36          30us          1           1           15           +0.5 
+  37          40us          2           1           9            0  
+  38          50us          1           1           28            0  
+  39          60us          1           1           35           +0.5 
+  40          70us          1           1           42           +1 
+  41          80us          1           1           48            0 
+  42          90us          1           1           55           +0.5  
+  43          100us         1           1           61           -0.5  
+  44          200us         1           1           128           0  
+  45          300us         3           1           63           +1.5  
+  46          400us         2           1           129           0  
+  47          500us         5           1           63           +0.5  
+  48          600us         6           1           63            0  
+  49          700us         7           1           63            -0.5  
+  50          800us         1           3           175           +0.5  
+  51          900us         9           1           63            -1.5  
+  52          1ms           1           3           219           -1.5
+  53          2ms           2           3           220           +3
+C51 COMPILER V9.59.0.0   DS18B20                                                           10/19/2019 18:41:25 PAGE 2   
+
+  54          3ms           3           3           220           +3
+  55          Xms           X           3           220           +3     
+  56                 (XµÄ·¶Î§Îª2µ½255)
+  57          */
+  58          void time0Start(unsigned char th0,unsigned char tl0)
+  59          {
+  60   1          TMOD |= 0x01;
+  61   1           TH0 = th0;
+  62   1          TL0 = tl0;
+  63   1          EA = 1;
+  64   1          ET0 = 1;
+  65   1          TR0 = 1;
+  66   1              delayFlag=0;
+  67   1      }
+  68          void Timer0Interrupt(void) interrupt 1
+  69          {
+  70   1           TH0 = 0x0FF;
+  71   1          TL0 = 0x0EE;
+  72   1              delayFlag=1;
+  73   1              TR0 = 0;
+  74   1          //add your code here!
+  75   1      }
+  76          void Delay(unsigned char th0,unsigned char tl0)
+  77          {
+  78   1              time0Start(th0,tl0);
+  79   1              while(delayFlag==0);
+  80   1      }
+  81          
+  82          /*****************DS18B20******************/ 
+  83          void Init_Ds18b20(void)     //DS18B20³õÊ¼»¯send reset and initialization command
+  84          {
+  85   1      DQ = 1;                     //DQ¸´Î»,²»ÒªÒ²¿ÉĞĞ¡£
+  86   1      Delay(0xff,0xee-i);                  //ÉÔ×öÑÓÊ±  10us
+  87   1      DQ = 0;                    //µ¥Æ¬»úÀ­µÍ×ÜÏß
+  88   1      Delay(0xfb,0xae-i); //600  us      //¾«È·ÑÓÊ±£¬Î¬³ÖÖÁÉÙ480us
+  89   1      //Delay(1,1,15); //20us
+  90   1      DQ = 1;                    //ÊÍ·Å×ÜÏß£¬¼´À­¸ßÁË×ÜÏß
+  91   1      Delay(0xfc,0x66-i); //500us               //´Ë´¦ÑÓÊ±ÓĞ×ã¹»,È·±£ÄÜÈÃDS18B20·¢³ö´æÔÚÂö³å¡£
+  92   1      }
+  93          
+  94          uchar Read_One_Byte()       //¶ÁÈ¡Ò»¸ö×Ö½ÚµÄÊı¾İread a byte date
+  95                                      //¶ÁÊı¾İÊ±,Êı¾İÒÔ×Ö½ÚµÄ×îµÍÓĞĞ§Î»ÏÈ´Ó×ÜÏßÒÆ³ö
+  96          {
+  97   1      uchar i   = 0;
+  98   1      uchar dat = 0;
+  99   1      for(i=8;i>0;i--)
+ 100   1         {
+ 101   2         DQ = 0;                  //½«×ÜÏßÀ­µÍ£¬ÒªÔÚ1usÖ®ºóÊÍ·Å×ÜÏß
+ 102   2                                 //µ¥Æ¬»úÒªÔÚ´ËÏÂ½µÑØºóµÄ15usÄÚ¶ÁÊı¾İ²Å»áÓĞĞ§¡£
+ 103   2         _nop_();                 //ÖÁÉÙÎ¬³ÖÁË1us,±íÊ¾¶ÁÊ±Ğò¿ªÊ¼
+ 104   2         dat >>= 1;               //ÈÃ´Ó×ÜÏßÉÏ¶Áµ½µÄÎ»Êı¾İ£¬ÒÀ´Î´Ó¸ßÎ»ÒÆ¶¯µ½µÍÎ»¡£
+ 105   2         DQ = 1;                  //ÊÍ·Å×ÜÏß£¬´ËºóDS18B20»á¿ØÖÆ×ÜÏß,°ÑÊı¾İ´«Êäµ½×ÜÏßÉÏ
+ 106   2         Delay(0xff,0xee-i);        //ÑÓÊ±10us,´Ë´¦²ÎÕÕÍÆ¼öµÄ¶ÁÊ±ĞòÍ¼£¬¾¡Á¿°Ñ¿ØÖÆÆ÷²ÉÑùÊ±¼ä·Åµ½¶ÁÊ±ĞòºóµÄ15usÄÚµ
+             -Ä×îºó²¿·Ö
+ 107   2         if(DQ)                   //¿ØÖÆÆ÷½øĞĞ²ÉÑù
+ 108   2         {
+ 109   3          dat |= 0x80;            //Èô×ÜÏßÎª1,¼´DQÎª1,ÄÇ¾Í°ÑdatµÄ×î¸ßÎ»ÖÃ1;ÈôÎª0,Ôò²»½øĞĞ´¦Àí,±£³ÖÎª0
+ 110   3         }        
+ 111   2         Delay(0xff,0xdb-i);       //20us        //´ËÑÓÊ±²»ÄÜÉÙ£¬È·±£¶ÁÊ±ĞòµÄ³¤¶È60us¡£
+ 112   2      }
+ 113   1      return (dat);
+ 114   1      }
+C51 COMPILER V9.59.0.0   DS18B20                                                           10/19/2019 18:41:25 PAGE 3   
+
+ 115          
+ 116          void Write_One_Byte(uchar dat)
+ 117          {
+ 118   1      uchar i = 0;
+ 119   1      for(i=8;i>0;i--)
+ 120   1      {
+ 121   2         DQ = 0;                        //À­µÍ×ÜÏß
+ 122   2         _nop_();                       //ÖÁÉÙÎ¬³ÖÁË1us,±íÊ¾Ğ´Ê±Ğò(°üÀ¨Ğ´0Ê±Ğò»òĞ´1Ê±Ğò)¿ªÊ¼
+ 123   2         DQ = dat&0x01;                 //´Ó×Ö½ÚµÄ×îµÍÎ»¿ªÊ¼´«Êä
+ 124   2                                       //Ö¸ÁîdatµÄ×îµÍÎ»¸³Óè¸ø×ÜÏß,±ØĞëÔÚÀ­µÍ×ÜÏßºóµÄ15usÄÚ,
+ 125   2                                       //ÒòÎª15usºóDS18B20»á¶Ô×ÜÏß²ÉÑù¡£
+ 126   2         Delay(0xff,0x91-i);               //±ØĞëÈÃĞ´Ê±Ğò³ÖĞøÖÁÉÙ60us
+ 127   2              
+ 128   2              DQ = 1;                        //Ğ´Íêºó,±ØĞëÊÍ·Å×ÜÏß,
+ 129   2         dat >>= 1;
+ 130   2         Delay(0xff,0x91-i);               //±ØĞëÈÃĞ´Ê±Ğò³ÖĞøÖÁÉÙ60us
+ 131   2      }
+ 132   1      }
+ 133          
+ 134          
+ 135          uint Get_Tmp()                   //»ñÈ¡ÎÂ¶Èget the wenduerature
+ 136          {
+ 137   1      float tt;
+ 138   1      uchar a,b;
+ 139   1      Init_Ds18b20();                //³õÊ¼»¯
+ 140   1      Write_One_Byte(0xcc);          //ºöÂÔROMÖ¸Áî
+ 141   1      Write_One_Byte(0x44);          //ÎÂ¶È×ª»»Ö¸Áî
+ 142   1      Init_Ds18b20();                 //³õÊ¼»¯
+ 143   1      Write_One_Byte(0xcc);          //ºöÂÔROMÖ¸Áî
+ 144   1      Write_One_Byte(0xbe);          //¶ÁÔİ´æÆ÷Ö¸Áî
+ 145   1      a = Read_One_Byte();           //¶ÁÈ¡µ½µÄµÚÒ»¸ö×Ö½ÚÎªÎÂ¶ÈLSB
+ 146   1      b = Read_One_Byte();           //¶ÁÈ¡µ½µÄµÚÒ»¸ö×Ö½ÚÎªÎÂ¶ÈMSB
+ 147   1      wendu = b;                      //ÏÈ°Ñ¸ß°ËÎ»ÓĞĞ§Êı¾İ¸³ÓÚwendu
+ 148   1      wendu <<= 8;                    //°ÑÒÔÉÏ8Î»Êı¾İ´ÓwenduµÍ°ËÎ»ÒÆµ½¸ß°ËÎ»
+ 149   1      wendu = wendu|a;                //Á½×Ö½ÚºÏ³ÉÒ»¸öÕûĞÍ±äÁ¿
+ 150   1      tt = wendu*0.0625;              //µÃµ½ÕæÊµÊ®½øÖÆÎÂ¶ÈÖµ
+ 151   1                                      //ÒòÎªDS18B20¿ÉÒÔ¾«È·µ½0.0625¶È
+ 152   1                                      //ËùÒÔ¶Á»ØÊı¾İµÄ×îµÍÎ»´ú±íµÄÊÇ0.0625¶È
+ 153   1      wendu = tt*10+0.5;               //·Å´óÊ®±¶
+ 154   1                                      //ÕâÑù×öµÄÄ¿µÄ½«Ğ¡ÊıµãºóµÚÒ»Î»Ò²×ª»»Îª¿ÉÏÔÊ¾Êı×Ö
+ 155   1                                      //Í¬Ê±½øĞĞÒ»¸öËÄÉáÎåÈë²Ù×÷¡£
+ 156   1      return wendu;
+ 157   1      }
+ 158          
+ 159          
+ 160          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    287    ----
+   CONSTANT SIZE    =     26    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      4       4
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

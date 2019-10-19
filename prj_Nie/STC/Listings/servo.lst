@@ -1,0 +1,73 @@
+C51 COMPILER V9.59.0.0   SERVO                                                             10/19/2019 12:34:56 PAGE 1   
+
+
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE SERVO
+OBJECT MODULE PLACED IN .\Objects\servo.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE servo.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\SRC) DEBUG OBJECTEXTEND PRINT(
+                    -.\Listings\servo.lst) OBJECT(.\Objects\servo.obj)
+
+line level    source
+
+   1          #include "servo.h"
+   2          #include "config.h"
+   3          void InitTimer0(void)
+   4          {
+   5   1          TMOD |= 0x01;
+   6   1          TH0 = 0x0FF;
+   7   1          TL0 = 0x0A4;
+   8   1          EA = 1;
+   9   1          ET0 = 1;
+  10   1          TR0 = 1;
+  11   1      }
+  12          void servoInit()
+  13          {
+  14   1              InitTimer0();
+  15   1              CCON = 0;                       //Initial PCA control register
+  16   1                                          //PCA timer stop running
+  17   1                                          //Clear CF flag
+  18   1                                          //Clear all module interrupt flag
+  19   1          CL = 0;                         //Reset PCA base timer
+  20   1          CH = 0;
+  21   1          CMOD = 0x04;                    //Set PCA timer clock source as Fosc/2
+  22   1                                          //Disable PCA timer overflow interrupt
+  23   1              //fb-0.5ms
+  24   1              //e7-2.5ms
+  25   1              
+  26   1          CCAP0H = CCAP0L = 0xef;         //PWM0 port output 50% duty cycle square wave
+  27   1          CCAPM0 = 0x42;                  //PCA module-0 work in 8-bit PWM mode and no PCA interrupt
+  28   1      
+  29   1          CR = 1;                         //PCA timer start run
+  30   1              
+  31   1      }
+  32          void servoReturn()
+  33          {
+  34   1              CCAP0H = CCAP0L = 0xf9;
+  35   1      }
+  36          //fb-0.5ms
+  37          //e7-2.5ms
+  38          void servoTurn()
+  39          {
+  40   1              CCAP0H = CCAP0L = 0xef;
+  41   1      }
+  42          void Timer0Interrupt(void) interrupt 1
+  43          {
+  44   1          TH0 = 0x0FF;
+  45   1          TL0 = 0x0A4;
+  46   1          //add your code here!
+  47   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     62    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+C51 COMPILER V9.59.0.0   SERVO                                                             10/19/2019 12:34:56 PAGE 2   
+
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

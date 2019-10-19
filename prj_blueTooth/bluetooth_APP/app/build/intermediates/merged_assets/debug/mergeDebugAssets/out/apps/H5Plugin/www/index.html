@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.css" rel="stylesheet" />
+		<style type="text/css">
+			#recMsgDiv{
+				width: 90%;
+				margin-left: 5%;
+				height: 500px;
+				background-color: #00FFFF;
+			}
+		</style>
+	</head>
+
+	<body>
+		<br>
+		<div id="recMsgDiv" contenteditable="true">1231</div>
+		<button id="peiduiBtn" type="button" class="mui-btn mui-btn-blue">已配对</button>
+		<br>
+		<input type="text" name="" id="macIpt" value="" />
+		<button id="connectBtn" type="button" class="mui-btn mui-btn-blue">连接</button>
+		
+		<input type="text" name="" id="sendIpt" value="" />
+		<button id="sendBtn" type="button" class="mui-btn mui-btn-blue">发送</button>
+		
+		<script src="js/mui.js"></script>
+		<script src="js/bluetooth.js" type="text/javascript" charset="utf-8"></script>
+		
+		<script type="text/javascript">
+			mui.init()
+			mui.plusReady(function(){
+				var recMsgDiv = document.getElementById("recMsgDiv");
+				var  macIpt= document.getElementById("macIpt");
+				var sendIpt = document.getElementById("sendIpt");
+				
+				document.getElementById("peiduiBtn").addEventListener("click",function(){
+					recMsgDiv.innerText=recMsgDiv.innerText+"\n"+"456"
+					plus.Bluetooth.getBondedDevices(function(result){
+							recMsgDiv.innerText=recMsgDiv.innerText+"\n"+"qqq"+JSON.stringify(result)
+						},function(result){
+							recMsgDiv.innerText=recMsgDiv.innerText+"\n"+"bbb"+result
+					});
+				})
+				document.getElementById("connectBtn").addEventListener("click",function(){
+					macIpt.value="5464"
+					plus.Bluetooth.connectDevice(
+						"20:19:05:14:22:94",
+					function(result){
+							recMsgDiv.innerText=recMsgDiv.innerText+"\n"+"qqq"+(result)
+						},function(result){
+							recMsgDiv.innerText=recMsgDiv.innerText+"\n"+"bbb"+result
+					});
+				})
+				document.getElementById("sendBtn").addEventListener("click",function(){
+					sendIpt.value="asdfsfd"
+					plus.Bluetooth.sendData(
+						"20:19:05:14:22:94",
+					function(result){
+							recMsgDiv.innerText=recMsgDiv.innerText+"\n"+"send"+(result)
+						},function(result){
+							recMsgDiv.innerText=recMsgDiv.innerText+"\n"+"send!!"+result
+					});
+				})
+				plus.Bluetooth.receiveData(
+					function(result){
+						recMsgDiv.innerText=recMsgDiv.innerText+"\n"+"RES"+(result)
+					},function(result){
+						recMsgDiv.innerText=recMsgDiv.innerText+"\n"+"RES!!"+result
+				});
+				
+				
+			})
+		</script>
+	</body>
+
+</html>

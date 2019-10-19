@@ -1,0 +1,92 @@
+C51 COMPILER V9.59.0.0   ECHO                                                              10/19/2019 13:39:41 PAGE 1   
+
+
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE ECHO
+OBJECT MODULE PLACED IN .\Objects\echo.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE echo.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\SRC) DEBUG OBJECTEXTEND PRINT(.
+                    -\Listings\echo.lst) OBJECT(.\Objects\echo.obj)
+
+line level    source
+
+   1          #include "echo.h"
+*** ERROR C231 IN LINE 18 OF config.h: 'LED': redefinition
+   2          #include<intrins.h>     
+   3          void  StartModule()                      //启动模块
+   4          {
+   5   1              TRIG=1;                                      //启动一次模块
+*** ERROR C202 IN LINE 5 OF echo.c: 'TRIG': undefined identifier
+   6   1              _nop_(); 
+   7   1              _nop_(); 
+   8   1              _nop_(); 
+   9   1              _nop_(); 
+  10   1              _nop_(); 
+  11   1              _nop_(); 
+  12   1              _nop_(); 
+  13   1              _nop_(); 
+  14   1              _nop_(); 
+  15   1              _nop_(); 
+  16   1              _nop_(); 
+  17   1              _nop_(); 
+  18   1              _nop_(); 
+  19   1              _nop_(); 
+  20   1              _nop_(); 
+  21   1              _nop_(); 
+  22   1              _nop_();
+  23   1              _nop_(); 
+  24   1              _nop_(); 
+  25   1              _nop_(); 
+  26   1              _nop_();_nop_(); 
+  27   1              _nop_(); 
+  28   1              _nop_(); 
+  29   1              _nop_(); 
+  30   1              _nop_(); 
+  31   1              _nop_(); 
+  32   1              _nop_(); 
+  33   1              _nop_(); 
+  34   1              _nop_(); 
+  35   1              _nop_(); 
+  36   1              _nop_(); 
+  37   1              _nop_(); 
+  38   1              _nop_(); 
+  39   1              _nop_(); 
+  40   1              _nop_(); 
+  41   1              _nop_(); 
+  42   1              _nop_();
+  43   1              _nop_(); 
+  44   1              _nop_(); 
+  45   1              _nop_(); 
+  46   1              _nop_();
+  47   1              TRIG=0;
+*** ERROR C202 IN LINE 47 OF echo.c: 'TRIG': undefined identifier
+  48   1      }
+  49          unsigned long Conut(void)
+  50          {
+  51   1              unsigned int time;
+C51 COMPILER V9.59.0.0   ECHO                                                              10/19/2019 13:39:41 PAGE 2   
+
+  52   1              unsigned long S=0;
+  53   1              time=TH1*256+TL1;
+  54   1              TH1=0;
+  55   1              TL1=0;
+  56   1      
+  57   1              S=(time*1.7)/100;     //算出来是CM
+  58   1              return S;
+  59   1      }
+  60          unsigned long getEcho(void)
+  61          {
+  62   1              TMOD|=0x10;                //设T0为方式1，GATE=1；
+  63   1              TH1=0;
+  64   1              TL1=0;          
+  65   1              //ET1=1;             //允许T0中断
+  66   1              EA=1;                      //开启总中断 
+  67   1              StartModule();
+  68   1              while(!ECHO);           //当RX为零时等待
+*** ERROR C202 IN LINE 68 OF echo.c: 'ECHO': undefined identifier
+  69   1              TR1=1;                      //开启计数
+  70   1              while(ECHO);                    //当RX为1计数并等待
+*** ERROR C202 IN LINE 70 OF echo.c: 'ECHO': undefined identifier
+  71   1              TR1=0;                          //关闭计数
+  72   1              return Conut();
+  73   1      }
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  5 ERROR(S)

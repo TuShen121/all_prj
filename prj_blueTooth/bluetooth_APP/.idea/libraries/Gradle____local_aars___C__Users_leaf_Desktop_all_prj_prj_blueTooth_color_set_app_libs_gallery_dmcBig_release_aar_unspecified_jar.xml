@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: __local_aars__:C.\Users\leaf\Desktop\all_prj\prj_blueTooth\color_set\app\libs\gallery-dmcBig-release.aar:unspecified@jar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/gallery-dmcBig-release.aar/58b3468c6ee73eb53f41cc0aa50706a9/jars/classes.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/gallery-dmcBig-release.aar/58b3468c6ee73eb53f41cc0aa50706a9/jars/libs/chrisbanes-photoview-1.2.4.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/gallery-dmcBig-release.aar/58b3468c6ee73eb53f41cc0aa50706a9/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

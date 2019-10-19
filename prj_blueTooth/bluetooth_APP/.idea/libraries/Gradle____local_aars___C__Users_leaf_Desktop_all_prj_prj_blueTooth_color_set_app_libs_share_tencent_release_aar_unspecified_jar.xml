@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Gradle: __local_aars__:C.\Users\leaf\Desktop\all_prj\prj_blueTooth\color_set\app\libs\share-tencent-release.aar:unspecified@jar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/share-tencent-release.aar/507a3b8877824e653d10d9e37bc19d8c/jars/classes.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/share-tencent-release.aar/507a3b8877824e653d10d9e37bc19d8c/jars/libs/tx_weibo_sdk-httpclient-3.0.1.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/share-tencent-release.aar/507a3b8877824e653d10d9e37bc19d8c/jars/libs/tx_weibo_sdk.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/share-tencent-release.aar/507a3b8877824e653d10d9e37bc19d8c/jars/libs/tx_weibo_sdk_component.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/share-tencent-release.aar/507a3b8877824e653d10d9e37bc19d8c/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

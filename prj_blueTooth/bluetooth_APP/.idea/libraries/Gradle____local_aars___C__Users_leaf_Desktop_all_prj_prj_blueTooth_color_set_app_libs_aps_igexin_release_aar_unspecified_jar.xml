@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: __local_aars__:C.\Users\leaf\Desktop\all_prj\prj_blueTooth\color_set\app\libs\aps-igexin-release.aar:unspecified@jar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/aps-igexin-release.aar/c7b6da63efa1e501d9554f0ab0b4c25c/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/aps-igexin-release.aar/c7b6da63efa1e501d9554f0ab0b4c25c/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/aps-igexin-release.aar/c7b6da63efa1e501d9554f0ab0b4c25c/jars/libs/GetuiSDK4.3.5.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

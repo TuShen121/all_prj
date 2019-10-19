@@ -1,0 +1,6 @@
+".\Objects\main.obj",
+".\Objects\oled.obj",
+".\Objects\ds18b20.obj",
+".\Objects\uart.obj" 
+TO ".\Objects\test" 
+PRINT(".\Listings\test.m51") RAMSIZE(256) 

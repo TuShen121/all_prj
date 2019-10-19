@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "C:\\Users\\leaf\\Desktop\\all_prj\\prj_blueTooth\\color_set\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-ldltr-v17\\values-ldltr-v17.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\leaf\\.gradle\\caches\\transforms-1\\files-1.1\\uniapp-release.aar\\3321221737be8ab5de8bca8d536d45a0\\res\\values-ldltr-v17\\values-ldltr-v17.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "51",
+                        "endOffsets": "102"
+                    }
+                }
+            ]
+        }
+    ]
+}
