@@ -1,4 +1,4 @@
-C51 COMPILER V9.59.0.0   UART                                                              10/19/2019 18:41:25 PAGE 1   
+C51 COMPILER V9.59.0.0   UART                                                              10/22/2019 17:16:34 PAGE 1   
 
 
 C51 COMPILER V9.59.0.0, COMPILATION OF MODULE UART
@@ -62,7 +62,7 @@ line level    source
   52   4                                      else {
   53   5                                              USART_RX_STA|=0x8000;   //接收完成了 
   54   5                                              /*****************************************/
-C51 COMPILER V9.59.0.0   UART                                                              10/19/2019 18:41:25 PAGE 2   
+C51 COMPILER V9.59.0.0   UART                                                              10/22/2019 17:16:34 PAGE 2   
 
   55   5      //                                      uartPwdDeal(USART_RX_BUF);//判断是否为密码并处理
   56   5      //                                      ESP8266_deal(USART_RX_BUF);//WiFi状态判断

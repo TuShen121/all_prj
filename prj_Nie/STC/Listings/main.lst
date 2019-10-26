@@ -1,4 +1,4 @@
-C51 COMPILER V9.59.0.0   MAIN                                                              10/19/2019 18:41:23 PAGE 1   
+C51 COMPILER V9.59.0.0   MAIN                                                              10/22/2019 17:16:32 PAGE 1   
 
 
 C51 COMPILER V9.59.0.0, COMPILATION OF MODULE MAIN
@@ -17,7 +17,7 @@ line level    source
    7          #include "stdio.h"
    8          #include "uart.h"
    9          
-  10          unsigned char phonenum[]="AT+CMGS=\"17858366909\"";
+  10          unsigned char phonenum[]="AT+CMGS=\"17858381281\"";
   11          unsigned char alarmtex[]="Found the fire";
   12          void mDelay(unsigned int i)
   13          {
@@ -62,7 +62,7 @@ line level    source
   52   1              P2M0|=0x80;
   53   1              P2M1|=0x80;
   54   1              
-C51 COMPILER V9.59.0.0   MAIN                                                              10/19/2019 18:41:23 PAGE 2   
+C51 COMPILER V9.59.0.0   MAIN                                                              10/22/2019 17:16:32 PAGE 2   
 
   55   1              
   56   1              InitUART();
@@ -126,7 +126,7 @@ line level    source
  114   4                              }       
  115   3                      }else
  116   2                      {
-C51 COMPILER V9.59.0.0   MAIN                                                              10/19/2019 18:41:23 PAGE 3   
+C51 COMPILER V9.59.0.0   MAIN                                                              10/22/2019 17:16:32 PAGE 3   
 
  117   3                              time=0;
  118   3                      }

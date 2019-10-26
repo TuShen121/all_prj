@@ -7,7 +7,7 @@
 #include "stdio.h"
 #include "uart.h"
 
-unsigned char phonenum[]="AT+CMGS=\"17858366909\"";
+unsigned char phonenum[]="AT+CMGS=\"17858381281\"";
 unsigned char alarmtex[]="Found the fire";
 void mDelay(unsigned int i)
 {

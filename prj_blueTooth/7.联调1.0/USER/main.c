@@ -64,12 +64,13 @@ int main(void)
 		bet = test_max30102_fun();		
 		if(bet)
 		{
-			putChar(0xa5);//低位先发
+
 //			printf("%ld\r\n",bet);
+			putChar(0xa5);//低位先发
 			bet=bet%10000;
 			putChar(bet);
 			putChar(bet>>8);
-			putChar(bet>>26);
+			putChar(bet>>16);
 			putChar(bet>>24);
 			putChar((u8)(bet)+(u8)(bet>>8)+(u8)(bet>>16)+(u8)(bet>>24));
 			putChar(0x5a);

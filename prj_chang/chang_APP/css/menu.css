@@ -1,0 +1,10 @@
+.menu{
+	position: absolute;
+	width: 80%;
+	top: 200px;
+	left: 0;
+	right: 0;
+	margin: auto;
+	/* z-index: 999; */
+	
+}
