@@ -61,11 +61,11 @@
 		</div>
 		<!-- //========================配网按钮组-->
 		<div id="peiwangGre">
-			<button type="button" class="mui-btn " v-on:click="showDevMenu()">设备配网</button>
+			<!-- <button type="button" class="mui-btn " v-on:click="showDevMenu()">设备配网</button> -->
 			<button type="button" class="mui-btn " v-on:click="showMeMenu()">本机登录</button>
 		</div>
 		<!-- //========================设备配网弹出菜单-->
-		<div id="menuDev"  class="mui-popover menu">
+		<!-- <div id="menuDev"  class="mui-popover menu">
 			<form class="mui-input-group">
 				<div class="mui-input-row">
 					<label>wifi名称</label>
@@ -88,7 +88,7 @@
 					<button type="button" class="mui-btn mui-btn-danger" v-on:click="devGetBtn()">获取</button>
 				</div>
 			</form>
-		</div>
+		</div> -->
 		<!-- //========================本机登录弹出菜单-->
 		<div id="menuMe"  class="mui-popover menu">
 			<form class="mui-input-group">
@@ -115,6 +115,7 @@
 	<script src="js/gauge.min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="js/vue.js" type="text/javascript" charset="utf-8"></script>
 	<script src="js/reconnecting-websocket.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/Mudp.js" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript">
 		
 		mui.init();
@@ -188,7 +189,7 @@
 				app.devStatus="未知"
 			}
 			var devId2=plus.storage.getItem("devId2");
-			ws.send('{"M":"say","ID":"'+devId2+'","C":"xx","SIGN":"xx3"}')
+			ws.send('{"M":"say","ID":"'+devId2+'","C":"xxx","SIGN":"xx3"}')
 		},3000);
 		//等待plus准备好
 		mui.plusReady(function(){
@@ -298,12 +299,14 @@
 			}
 			//=====================
 			
-			//开关被点击
+			//布防开关被点击
 			document.getElementById("mySwitch").addEventListener("toggle",function(event){
+				// mui.toast(1)
 				var devId2=plus.storage.getItem("devId2");
 				var tempChangeDat=document.getElementById("temprange").value;//获取温度滑动条的值
 				if(tempChangeDat<10)tempChangeDat='0'+tempChangeDat;//补齐两位
-				if(event.detail.isActive){
+				var isActive = document.getElementById("mySwitch").classList.contains("mui-active");
+				if(isActive){
 					var bufangChangeDat='1'
 					ws.send('{"M":"say","ID":"'+devId2+'","C":"'+tempChangeDat+ bufangChangeDat+'","SIGN":"xx3"}')
 				}else{

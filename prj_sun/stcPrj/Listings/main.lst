@@ -1,0 +1,246 @@
+C51 COMPILER V9.59.0.0   MAIN                                                              10/29/2019 21:54:18 PAGE 1   
+
+
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\SRC) DEBUG OBJECTEXTEND PRINT(.
+                    -\Listings\main.lst) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include "STC89C5x.h"
+   2          #include "uart.h"
+   3          #include "temp.h"
+   4          #include "stdio.h"
+   5          #include "oled.h"
+   6          
+   7          unsigned char DisplayData[6];
+   8          unsigned char alarmFlag=0;
+   9          unsigned strong =0;
+  10          sbit windSwitch = P0^1;//=0闭合
+  11          sbit hotSwitch = P0^0;
+  12          sbit key=P2^2;
+  13          
+  14          sbit led1=P3^5;//=1亮
+  15          sbit led2=P3^6;
+  16          
+  17          unsigned char tempMax=30;
+  18          void showTitle()
+  19          {
+  20   1              unsigned char offset=15;
+  21   1              OLED_ShowCHinese(0+offset,0,0);//大棚温度监控系统
+  22   1              OLED_ShowCHinese(18+offset,0,1);//
+  23   1              OLED_ShowCHinese(36+offset,0,2);//
+  24   1              OLED_ShowCHinese(54+offset,0,3);//
+  25   1              OLED_ShowCHinese(72+offset,0,4);//
+  26   1              OLED_ShowCHinese(90+offset,0,5);//
+  27   1              
+  28   1              offset=0;
+  29   1              OLED_ShowCHinese(0+offset,2,2);//温度
+  30   1              OLED_ShowCHinese(18+offset,2,3);//
+  31   1              
+  32   1              OLED_ShowChar(90,2,'#');//箭头
+  33   1              
+  34   1              offset=0;
+  35   1              OLED_ShowCHinese(0+offset,4,8);//制冷
+  36   1              OLED_ShowCHinese(18+offset,4,9);//
+  37   1              OLED_ShowChar(40+offset,4,'X');////制冷显示
+  38   1              
+  39   1              offset=0;
+  40   1              OLED_ShowCHinese(0+offset,6,10);//加热
+  41   1              OLED_ShowCHinese(18+offset,6,11);//
+  42   1              OLED_ShowChar(40+offset,6,'X');//加热显示
+  43   1      }
+  44          void datapros(int temp)          
+  45          {
+  46   1              
+  47   1              float tp;  
+  48   1              if(temp< 0)                             //当温度值为负数
+  49   1              {
+  50   2                      DisplayData[0] = 0x40;    //   -
+  51   2                      //因为读取的温度是实际温度的补码，所以减1，再取反求出原码
+  52   2                      temp=temp-1;
+  53   2                      temp=~temp;
+  54   2                      tp=temp;
+C51 COMPILER V9.59.0.0   MAIN                                                              10/29/2019 21:54:18 PAGE 2   
+
+  55   2                      temp=tp*0.0625*100+0.5; 
+  56   2                      //留两个小数点就*100，+0.5是四舍五入，因为C语言浮点数转换为整型的时候把小数点
+  57   2                      //后面的数自动去掉，不管是否大于0.5，而+0.5之后大于0.5的就是进1了，小于0.5的就
+  58   2                      //算加上0.5，还是在小数点后面。
+  59   2       
+  60   2              }
+  61   1              else
+  62   1              {                       
+  63   2                      DisplayData[0] = 0x00;
+  64   2                      tp=temp;//因为数据处理有小数点所以将温度赋给一个浮点型变量
+  65   2                      //如果温度是正的那么，那么正数的原码就是补码它本身
+  66   2                      temp=tp*0.0625*100+0.5; 
+  67   2                      //留两个小数点就*100，+0.5是四舍五入，因为C语言浮点数转换为整型的时候把小数点
+  68   2                      //后面的数自动去掉，不管是否大于0.5，而+0.5之后大于0.5的就是进1了，小于0.5的就
+  69   2                      //算加上0.5，还是在小数点后面。
+  70   2              }
+  71   1              
+  72   1                      if(temp/100>tempMax+1)//温度超过阈值1度
+  73   1                      {
+  74   2                              alarmFlag=1;
+  75   2                              if(strong==0){
+  76   3                                      windSwitch=0;////打开风扇
+  77   3                                      hotSwitch=1;
+  78   3                                      OLED_ShowChar(40+0,4,'Y');////制冷显示
+  79   3                                      OLED_ShowChar(40+0,6,'X');//加热显示
+  80   3                              }
+  81   2                      }else if(temp/100<tempMax-1)//温度低于阈值1度
+  82   1                      {
+  83   2                              alarmFlag=0;
+  84   2                              if(strong==0){
+  85   3                                      windSwitch=1;
+  86   3                                      hotSwitch=0;//打开制热
+  87   3                                      OLED_ShowChar(40+0,4,'X');////制冷显示
+  88   3                                      OLED_ShowChar(40+0,6,'Y');//加热显示
+  89   3                              }
+  90   2                      }else//正常
+  91   1                      {
+  92   2                              alarmFlag=3;
+  93   2                              if(strong==0){
+  94   3                                      windSwitch=1;//两个都关闭
+  95   3                                      hotSwitch=1;
+  96   3                                      OLED_ShowChar(40+0,4,'X');////制冷显示
+  97   3                                      OLED_ShowChar(40+0,6,'X');//加热显示
+  98   3                              }
+  99   2                      }
+ 100   1              
+ 101   1              sprintf(DisplayData,"%.2f",temp*0.01);//在屏幕上显示温度信息
+ 102   1              OLED_ShowString(36,2,DisplayData);
+ 103   1      }
+ 104          
+ 105          void showTempMax()
+ 106          {
+ 107   1              OLED_ShowNum(100,2,tempMax,2,16);
+ 108   1              
+ 109   1      }
+ 110          void delay(unsigned int i)
+ 111          {
+ 112   1              while(i--);
+ 113   1      }
+ 114          void main()
+ 115          {
+ 116   1              //u8 len;
+C51 COMPILER V9.59.0.0   MAIN                                                              10/29/2019 21:54:18 PAGE 3   
+
+ 117   1              unsigned int time;
+ 118   1              unsigned char timeSend=0;
+ 119   1              InitUART();
+ 120   1              OLED_Init();
+ 121   1              showTitle();
+ 122   1              delay(65530);//延时一会儿
+ 123   1              SendString("m1\r\n",4);//开始联网
+ 124   1              while(1)
+ 125   1              {
+ 126   2                      
+ 127   2                      datapros(Ds18b20ReadTemp());     //温度接收和显示
+ 128   2                      showTempMax();//在屏幕上显示温度阈值
+ 129   2                      if(USART_RX_STA&0x8000)
+ 130   2                      {                       
+ 131   3                      
+ 132   3                              //len=USART_RX_STA&0x3fff;//得到此次接收到的数据长度USART_RX_BUF[t];
+ 133   3                              if(USART_RX_BUF[0]=='1')//打开风扇
+ 134   3                              {
+ 135   4                                      strong=1;
+ 136   4                                      windSwitch=0;//闭合
+ 137   4                                      hotSwitch=1;
+ 138   4                                      OLED_ShowChar(40+0,4,'Y');////制冷显示
+ 139   4                                      OLED_ShowChar(40+0,6,'X');//加热显示
+ 140   4                              }
+ 141   3                              else if(USART_RX_BUF[0]=='2')//打开加热
+ 142   3                              {
+ 143   4                                      strong=1;
+ 144   4                                      windSwitch=1;
+ 145   4                                      hotSwitch=0;//闭合
+ 146   4                                      OLED_ShowChar(40+0,4,'X');////制冷显示
+ 147   4                                      OLED_ShowChar(40+0,6,'Y');//加热显示
+ 148   4                              }
+ 149   3                              else if(USART_RX_BUF[0]=='3')//二者关闭
+ 150   3                              {
+ 151   4                                      strong=1;
+ 152   4                                      windSwitch=1;
+ 153   4                                      hotSwitch=1;
+ 154   4                                      OLED_ShowChar(40+0,4,'X');////制冷显示
+ 155   4                                      OLED_ShowChar(40+0,6,'X');//加热显示
+ 156   4                              }
+ 157   3                              else if(USART_RX_BUF[0]=='4')//关闭强制，让单片机自动选择
+ 158   3                              {
+ 159   4                                      strong=0;
+ 160   4      //                              windSwitch=1;
+ 161   4      //                              hotSwitch=1;
+ 162   4      //                              OLED_ShowChar(40+0,4,'X');////制冷显示
+ 163   4      //                              OLED_ShowChar(40+0,6,'X');//加热显示
+ 164   4                              }
+ 165   3                              if(USART_RX_BUF[1]>='0' && USART_RX_BUF[1]<='9' )//收到温度阈值
+ 166   3                              {
+ 167   4                                      tempMax=USART_RX_BUF[1]-0x30;
+ 168   4                              }
+ 169   3                              if(USART_RX_BUF[2]>='0' && USART_RX_BUF[2]<='9' )
+ 170   3                              {
+ 171   4                                      tempMax=tempMax*10+USART_RX_BUF[2]-0x30;
+ 172   4                              }
+ 173   3                              USART_RX_STA=0;
+ 174   3                      }
+ 175   2                      
+ 176   2                      if(key==0){
+ 177   3                              time++;
+ 178   3                              if(time>100)
+C51 COMPILER V9.59.0.0   MAIN                                                              10/29/2019 21:54:18 PAGE 4   
+
+ 179   3                              {
+ 180   4                                      SendString("m0\r\n",4);//开始配网
+ 181   4                                      time=0;
+ 182   4                                      led2=1;
+ 183   4                              }
+ 184   3                      }else
+ 185   2                      {
+ 186   3                              time=0;
+ 187   3                              led2=0;
+ 188   3                      }
+ 189   2                      timeSend++;
+ 190   2                      if(timeSend>=20)
+ 191   2                      {
+ 192   3                              timeSend=0;
+ 193   3                              SendOneByte((char)windSwitch+0x30);//发送风扇开关信息1未开启
+ 194   3                              SendOneByte(',');
+ 195   3                              SendOneByte((char)hotSwitch+0x30);//发送加热开关信息1未开启
+ 196   3                              SendOneByte(',');
+ 197   3                              SendOneByte(alarmFlag+0x30);//发送报警信息1高0低3正常
+ 198   3                              SendOneByte(',');
+ 199   3                              SendString(DisplayData,5);//发送温度信息
+ 200   3                              SendOneByte(',');
+ 201   3                              if(tempMax>10)//温度阈值信息
+ 202   3                              {
+ 203   4                                      SendOneByte(tempMax/10+0x30);
+ 204   4                                      SendOneByte(tempMax%10+0x30);
+ 205   4                              }
+ 206   3                              else
+ 207   3                              {
+ 208   4                                      SendOneByte(tempMax+0x30);
+ 209   4                              }
+ 210   3                              SendOneByte(',');
+ 211   3                              SendOneByte(strong+0x30);//是否强制，1是
+ 212   3                              SendOneByte(',');
+ 213   3                              SendString("\r\n",2);
+ 214   3                      }
+ 215   2              }
+ 216   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    884    ----
+   CONSTANT SIZE    =     18    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     10      10
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

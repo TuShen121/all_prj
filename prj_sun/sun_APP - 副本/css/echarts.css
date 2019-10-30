@@ -1,0 +1,9 @@
+#historyDiv{
+	position: absolute;
+	width: 100%;
+	top: 200px;
+	z-index: 9999;
+	/* left: 0;
+	right: 0;
+	margin: auto; */
+}

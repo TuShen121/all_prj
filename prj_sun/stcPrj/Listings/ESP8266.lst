@@ -1,0 +1,59 @@
+C51 COMPILER V9.59.0.0   ESP8266                                                           09/05/2019 22:10:01 PAGE 1   
+
+
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE ESP8266
+OBJECT MODULE PLACED IN .\Objects\ESP8266.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ESP8266.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\E
+                    -SP8266.lst) OBJECT(.\Objects\ESP8266.obj)
+
+line level    source
+
+   1          #include "ESP8266.h"
+   2          //================================ap+udp模式启动消息=======================================
+   3          //1、启动       setAp()
+   4          //2、监听 local UDP socket address / port: 0.0.0.0:5000
+   5          
+   6          //================================sta+tcp模式启动消息=======================================
+   7          //1、setSta()
+   8          //2、await get ip
+   9          //3、wifiok
+  10          //4、netok
+  11          
+  12          //5、loginok
+  13          
+  14          unsigned char ESP8266_state=0;
+  15          
+  16          void ESP8266_deal(unsigned char *USART_RX_BUF)
+  17          {
+  18   1              if(USART_RX_BUF[0]=='l' )//udp启动---跟后面tcp登录成功重合。
+  19   1              {
+  20   2                      ESP8266_state=4;
+  21   2              }else if(USART_RX_BUF[0]=='a')//等待连接WiFi获得ip
+  22   1              {
+  23   2                      ESP8266_state=1;
+  24   2              }else if(USART_RX_BUF[0]=='w')//WiFi连接成功
+  25   1              {
+  26   2                      ESP8266_state=2;
+  27   2              }else if(USART_RX_BUF[0]=='n')//网络连接成功
+  28   1              {
+  29   2                      ESP8266_state=3;
+  30   2              }else if(USART_RX_BUF[0]=='l')//登录成功
+  31   1              {
+  32   2                      ESP8266_state=4;
+  33   2              }
+  34   1              
+  35   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     41    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      1    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

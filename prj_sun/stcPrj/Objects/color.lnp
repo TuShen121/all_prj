@@ -1,0 +1,6 @@
+".\Objects\uart.obj",
+".\Objects\main.obj",
+".\Objects\temp.obj",
+".\Objects\oled.obj" 
+TO ".\Objects\color" 
+PRINT(".\Listings\color.m51") RAMSIZE(256) 

@@ -1,4 +1,4 @@
-C51 COMPILER V9.59.0.0   ECHO                                                              10/14/2019 21:38:37 PAGE 1   
+C51 COMPILER V9.59.0.0   ECHO                                                              10/27/2019 17:59:09 PAGE 1   
 
 
 C51 COMPILER V9.59.0.0, COMPILATION OF MODULE ECHO
@@ -62,7 +62,7 @@ line level    source
   52   1              unsigned long S=0;
   53   1              time=TH1*256+TL1;
   54   1              TH1=0;
-C51 COMPILER V9.59.0.0   ECHO                                                              10/14/2019 21:38:37 PAGE 2   
+C51 COMPILER V9.59.0.0   ECHO                                                              10/27/2019 17:59:09 PAGE 2   
 
   55   1              TL1=0;
   56   1      

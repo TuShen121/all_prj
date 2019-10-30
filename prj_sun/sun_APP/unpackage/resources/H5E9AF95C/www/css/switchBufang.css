@@ -1,0 +1,12 @@
+.mui-switch{
+	margin-top: 40px;
+	margin-right: 80px;
+	float: right;
+	width: 150px;
+	height: 50px;
+	
+}
+.mui-switch>.mui-switch-handle{
+	width: 50px;
+	height: 50px;
+}

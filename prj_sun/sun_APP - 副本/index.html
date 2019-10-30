@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title></title>
+    <link href="css/mui.min.css" rel="stylesheet"/>
+	<link rel="stylesheet" type="text/css" href="css/tempShow.css"/>
+	<link rel="stylesheet" type="text/css" href="css/block.css"/>
+	<link rel="stylesheet" type="text/css" href="css/switchBufang.css"/>
+	<link rel="stylesheet" type="text/css" href="css/rangeTemp.css"/>
+	<link rel="stylesheet" type="text/css" href="css/peiwangGre.css"/>
+	<link rel="stylesheet" type="text/css" href="css/menu.css"/>
+	<link rel="stylesheet" type="text/css" href="css/echarts.css"/>
+	<style type="text/css">
+		.mui-backdrop{
+			background-color: rgba(0,0,0,0.7);
+		}
+		/* .mui-content{
+			background-color: white;
+		} */
+	</style>
+</head>
+<body>
+	
+	<header class="mui-bar mui-bar-nav">
+		<h1 class="mui-title">大棚温度监控</h1>
+	</header>
+	
+	<div class="mui-content">
+		<br>
+		<div><h4>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;设备id: <span v-text="devId2"></span></h4></div>
+		<div><h4>设备状态:<span v-text="devStatus"></span></h4></div>
+		<div><h4>本机状态:<span v-text="meStatus"></span></h4></div>
+		<!-- //========================温度显示 -->
+		<canvas id="tempShow"
+				data-width="100" 
+				data-height="400"
+				data-type="linear-gauge"
+				data-value="0"
+		></canvas>
+		<div id="showBtn">
+			<!-- //========================是否在加热 -->
+			<button id="jiaReShow" type="button" v-text="block1" class="mui-btn " v-bind:class='{"mui-btn-danger":block1_class}'></button>
+			<!-- //========================是否在制冷 -->
+			<button id="zhiLengShow" type="button" v-text="block2" class="mui-btn " v-bind:class='{"mui-btn-primary":block2_class}'></button>
+			<!-- //========================当前温度状态 --><!-- 温度报警信息,1高,0低,3正常 -->
+			<button id="tempStatusShow" type="button" v-text="block3" class="mui-btn " v-bind:class='{"mui-btn-primary":block3_class==0,"mui-btn-danger":block3_class==1}'></button>
+			<ul class="switchGroup" class="mui-table-view">
+				<!-- //========================强行开启加热 -->
+				<li class="mui-table-view-cell">
+					强制开启或关闭加热
+					<div id="mySwitch1" class="mui-switch">
+					  <div  class="mui-switch-handle"></div>
+					</div>
+				</li>
+				<li class="mui-table-view-cell">
+					强制开启或关闭制冷
+					<!-- //========================强行开启制冷 -->
+					<div id="mySwitch2" class="mui-switch">
+					  <div  class="mui-switch-handle"></div>
+					</div>
+				</li>
+				<li class="mui-table-view-cell">
+					开启或关闭自动控制
+					<!-- //========================关闭强制 -->
+					<div id="mySwitch3" class="mui-switch">
+					  <div  class="mui-switch-handle"></div>
+					</div>
+				</li>
+			</ul>
+		</div>
+		
+		<!-- //========================温度调节 -->
+		<div id="tempRange" class="mui-input-row mui-input-range">
+			<label >温度阈值: <span v-text="tempMax"></span></label>
+			<input id="temprange" type="range" min="0" max="100">
+		</div>
+		<!-- //========================按钮组-->
+		<div id="peiwangGre">
+			<button type="button" class="mui-btn " v-on:click="showMeMenu()">本机登录</button>
+			<button type="button" class="mui-btn " v-on:click="showHistory()">历史数据</button>
+		</div>
+	
+		<!-- //========================本机登录弹出菜单-->
+		<div id="menuMe"  class="mui-popover menu">
+			<form class="mui-input-group">
+				<div class="mui-input-row">
+					<label>本机ID</label>
+					<input type="text" id="meId" class="mui-input-clear" placeholder="请输入内容" value="14042">
+				</div>
+				<div class="mui-input-row">
+					<label>本机KEY</label>
+					<input type="text" id="meKey" class="mui-input-clear" placeholder="请输入内容" value="edc37587d">
+				</div>
+				<div class="mui-input-row">
+					<label>设备ID</label>
+					<input type="text" id="devId2" class="mui-input-clear" placeholder="请输入内容" value="D13943">
+				</div>
+				<div class="mui-button-row">
+					<button type="button" class="mui-btn mui-btn-primary" v-on:click="meLoginBtn()" >登录</button>
+					<button type="button" class="mui-btn mui-btn-danger" v-on:click="meCancleBtn()">取消</button>
+				</div>
+			</form>
+		</div>
+		
+	</div>
+	<script src="js/mui.min.js"></script>
+	<script src="js/gauge.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/vue.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/reconnecting-websocket.js" type="text/javascript" charset="utf-8"></script>
+
+	<script type="text/javascript">
+		
+		mui.init();
+		var ws = new ReconnectingWebSocket('ws://www.bigiot.net:8383');
+		
+	
+		var app = new Vue({
+			el: '.mui-content',
+			data:{
+				devId2:"",
+				devStatus:"未知",
+				meStatus:"未登录",
+				block1:"未加热",
+				block2:"未制冷",
+				block3:"温度正常",
+
+				block1_class:false,
+				block2_class:false,
+				block3_class:3,//温度报警信息,1高,0低,3正常
+				tempMax:0,
+				
+			},
+			// mounted(){
+			// 	const  myCharts = this.$echarts.init(this.$refs.myCharts);
+			// 	myCharts.setOption(option);
+			// 	}
+		})
+		//点击显示本机设置菜单菜单
+		app.showMeMenu=function(){
+			mui('#menuMe').popover('toggle');//本机设置菜单菜单切换显示
+		}
+		//点击本机登录按钮
+		app.meLoginBtn=function(){
+			var meId = document.getElementById("meId").value;
+			var meKey = document.getElementById("meKey").value;
+			var devId2 = document.getElementById("devId2").value;
+			
+			plus.storage.setItem("meId", meId);
+			plus.storage.setItem("meKey", meKey);
+			plus.storage.setItem("devId2", devId2);
+			
+			app.devId2=devId2
+			
+			ws.send('{"M":"checkin","ID":"'+meId+'","K":"'+meKey+'"}')
+		}
+		//点击本机取消按钮
+		app.meCancleBtn=function(){
+			mui('#menuMe').popover('toggle');//设备配网菜单切换显示
+		}
+		mui('#historyDiv').popover('toggle');//设备配网菜单切换显示
+		app.showHistory=function(){
+			//mui('#historyDiv').popover('toggle');//设备配网菜单切换显示
+			mui.openWindow({
+			url:"mEcharts.html",
+			id:"mEcharts",
+			styles:{
+			  top:'200px',//新页面顶部位置
+			  // bottom:newage-bottom-position,//新页面底部位置
+			 // width:newpage-width,//新页面宽度，默认为100%
+			  height:'400px',//新页面高度，默认为100%
+			},
+
+		})
+		}
+		//等待plus准备好
+		mui.plusReady(function(){
+			//开机的时候将本地保存的数据填充到页面上
+			app.devId2=plus.storage.getItem("devId2");
+			document.getElementById("meId").value=plus.storage.getItem("meId");
+			document.getElementById("meKey").value=plus.storage.getItem("meKey");
+			document.getElementById("devId2").value=plus.storage.getItem("devId2");
+			
+			ws.onmessage=function(msg){
+				var dat = JSON.parse(msg.data);
+				console.log(JSON.stringify(dat))
+				switch(dat.M){
+					case "WELCOME TO BIGIOT"://服务器连接成功就登录服务器
+						var meId=plus.storage.getItem("meId");
+						var meKey=plus.storage.getItem("meKey");
+						ws.send('{"M":"checkin","ID":"'+meId+'","K":"'+meKey+'"}')
+						break;
+					case "ping"://发送心跳包
+						ws.send('{"M":"beat"}');
+						break;
+					case "checkinok"://登录成功
+						app.meStatus="登录成功"
+						break;
+					case "say"://收到消息
+						if(dat.C.split(',')[0]=='1'){//1表示风扇未开启,0表示开启
+							app.block2="未制冷"
+							app.block2_class=false
+						}
+						else{
+							app.block2="正在制冷"
+							app.block2_class=true
+						}
+						//==================================
+						if(dat.C.split(',')[1]=='1'){//1表示加热未开启,0表示加热已开启
+							app.block1="未加热"
+							app.block1_class=false 
+						}
+						else{
+							app.block1="正在加热"
+							app.block1_class=true
+						}
+					//	=================================
+						if(dat.C.split(',')[2]=='1'){//温度报警信息,1高,0低,3正常
+							app.block3="温度过高"
+							app.block3_class=1
+						}
+						else if(dat.C.split(',')[2]=='0'){
+							app.block3="温度过低"
+							app.block3_class=0
+						}
+						else if(dat.C.split(',')[2]=='3'){
+							app.block3="温度正常"
+							app.block3_class=3
+						}
+						//=======================================
+						//当前的温度，写在温度计上		
+						document.gauges[0].value=dat.C.split(',')[3];
+						//=======================================
+						//温度的阈值,写在滑块的左边
+						
+						app.tempMax =dat.C.split(',')[4];
+						
+						//===================是否在强制状态下=================
+						//获取强制开关状态
+						var isActive = document.getElementById("mySwitch3").classList.contains("mui-active");
+						if(dat.C.split(',')[5]=='1'){//在强制状态下,即不在单片机自动控制下
+							if(isActive){
+								mui("#mySwitch3").switch().toggle();
+							}
+						}
+						else{//如果在自动控制下
+							if(!isActive){
+								mui("#mySwitch3").switch().toggle();
+							}
+							var isActive1 = document.getElementById("mySwitch1").classList.contains("mui-active");
+							if(isActive1){
+								mui("#mySwitch1").switch().toggle();
+							}
+							var isActive2 = document.getElementById("mySwitch2").classList.contains("mui-active");
+							if(isActive2){
+								mui("#mySwitch2").switch().toggle();
+							}
+						}
+						 
+						break;
+				}
+			}
+			//=====================
+			//=======开关1 强制加热==============
+			var strongFlag=3;//是否强制加热制冷,1强制打开风扇,2强制打开加热,,3强制关闭二者,4关闭强制,让单片机自动选择
+			var tempRangeValue ='30';
+			
+			document.getElementById("mySwitch1").addEventListener("touchend",function(event){
+				var devId2=plus.storage.getItem("devId2");//获取设备ID
+				//获取开状态
+				var isActive = document.getElementById("mySwitch1").classList.contains("mui-active");
+				if(isActive){
+					strongFlag='2'//强制打开加热
+					var isActive2 = document.getElementById("mySwitch2").classList.contains("mui-active");
+					if(isActive2){
+						mui("#mySwitch2").switch().toggle();
+					}
+				}else{
+					if(strongFlag=='2')
+					strongFlag='3'//关闭二者
+							
+				}
+				ws.send('{"M":"say","ID":"'+devId2+'","C":"'+strongFlag+ tempRangeValue+'","SIGN":"xx3"}')
+				
+			})
+			//=========强制制冷============
+			
+			document.getElementById("mySwitch2").addEventListener("touchend",function(event){
+				var devId2=plus.storage.getItem("devId2");//获取设备ID
+				//获取开状态
+				var isActive = document.getElementById("mySwitch2").classList.contains("mui-active");
+				if(isActive){
+					strongFlag='1'//强制打开风扇
+					var isActive1 = document.getElementById("mySwitch1").classList.contains("mui-active");
+					if(isActive1){
+						mui("#mySwitch1").switch().toggle();
+					}
+				}else{
+					if(strongFlag=='1')
+					strongFlag='3'//关闭二者
+				}
+				ws.send('{"M":"say","ID":"'+devId2+'","C":"'+strongFlag+ tempRangeValue+'","SIGN":"xx3"}')
+			})
+			//=========关闭强制，让单片机判断============
+			document.getElementById("mySwitch3").addEventListener("touchend",function(event){
+				var devId2=plus.storage.getItem("devId2");//获取设备ID
+				//获取开状态
+				var isActive = document.getElementById("mySwitch3").classList.contains("mui-active");
+				if(isActive){
+					if(strongFlag!='4')
+					strongFlag='4'//让单片机判断
+				}else{
+					if(strongFlag=='4')
+					strongFlag='3'//关闭二者,不让单片机判断
+				}
+				ws.send('{"M":"say","ID":"'+devId2+'","C":"'+strongFlag+ tempRangeValue+'","SIGN":"xx3"}')
+			})
+			//滑块被滑动
+			document.getElementById("temprange").addEventListener("change",function(){
+				var devId2=plus.storage.getItem("devId2");
+				tempRangeValue=document.getElementById("temprange").value;//获取温度条的值
+				if(tempRangeValue<10)tempRangeValue='0'+tempRangeValue;//补齐两位
+				
+				ws.send('{"M":"say","ID":"'+devId2+'","C":"'+strongFlag+ tempRangeValue+'","SIGN":"xx3"}')
+			})
+		})//mui.plusReady(function()//等待plus准备好
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		</script>
+</body>
+</html>

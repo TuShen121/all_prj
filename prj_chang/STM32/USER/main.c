@@ -69,6 +69,7 @@ int main(void)
 		delay_ms(200);
 	}
 	showtitle();//显示基本布局
+	printf("m1\r\n");//强行进入联网模式
 	while(1) 
 	{		
 	//******************
@@ -76,9 +77,8 @@ int main(void)
 		OLED_ShowNum(0+45,2,temperature/10,2,16);	//显示正数部分	  
 		OLED_ShowChar(16+45,2,'.',16);
 		OLED_ShowNum(18+45,2,temperature%10,2,16);	//显示小数部分 
-		//BEEP=0;
 		delay_ms(1000);
-		//printf("hello\r\n");
+		
 		//***********************************
 		if(USART_RX_STA&0x8000)
 		{					   
@@ -88,7 +88,7 @@ int main(void)
 			if(USART_RX_BUF[2]=='0'){
 				OLED_ShowChar(50+70,6,'X' ,16);//布防
 				buFang=0;
-			}else
+			}else if(USART_RX_BUF[2]=='1')
 			{
 				OLED_ShowChar(50+70,6,'Y' ,16);//布防
 				buFang=1;
@@ -138,28 +138,31 @@ int main(void)
 		
 		//==================
 		if(KEY==0)//按键
-		{	
-			unsigned int time=0;
-			
-			while(KEY==0){
-				delay_ms(1000);
-				time++;
-				if(time>=10)
-				{
-					printf("m0\r\n");
-					break;
-				}
-			}
-
-			if(buFang==1){
-				OLED_ShowChar(50+70,6,'X' ,16);//布防
-				buFang=0;
-			}else
+		{	delay_ms(100);//延时消抖
+			if(KEY==0)//按键
 			{
-				OLED_ShowChar(50+70,6,'Y' ,16);//布防
-				buFang=1;
+				unsigned int time=0;
+				
+				while(KEY==0){//长按进入配网模式
+					delay_ms(1000);
+					time++;
+					if(time>=10)
+					{
+						printf("m0\r\n");
+						break;
+					}
+				}
+
+				if(buFang==1){
+					OLED_ShowChar(50+70,6,'X' ,16);//布防
+					buFang=0;
+				}else
+				{
+					OLED_ShowChar(50+70,6,'Y' ,16);//布防
+					buFang=1;
+				}
+				while(KEY==0);//等待按键松开
 			}
-			
 		}
 		//=============发送各个传感器信息======
 		printf("%d,",HuoYan);

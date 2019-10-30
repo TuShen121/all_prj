@@ -1,0 +1,158 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.css" rel="stylesheet" />
+		<style type="text/css">
+			#main{
+				margin-top: 100px;
+			}
+			#inputGroup{
+				position: absolute;
+				width: 80%;
+				top: 200px;
+				left: 0;
+				right: 0;
+				margin: auto;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="main" style="width: 100%;height:400px;"></div>
+		<div class="mui-button-row">
+			<button id="setInfo" type="button" class="mui-btn mui-btn-primary" >配置服务器信息</button>
+			<button id="getInfo" type="button" class="mui-btn mui-btn-danger" >获取历史数据</button>
+		</div>
+		<div id="inputGroup" class="mui-popover">
+			<form class="mui-input-group">
+				
+				<div class="mui-input-row">
+					<label>应用ID</label>
+					<input id="appId" type="text" class="mui-input-clear" placeholder="请输入" value="38">
+				</div>
+				<div class="mui-input-row">
+					<label>应用密码</label>
+					<input id="appKey" type="text" class="mui-input-clear" placeholder="请输入" value="854b40afb2">
+				</div>
+				<div class="mui-input-row">
+					<label>用户ID</label>
+					<input id="userId" type="text" class="mui-input-clear" placeholder="请输入" value="1673">
+				</div>
+				<div class="mui-input-row">
+					<label>用户密码</label>
+					<input id="userKey" type="text" class="mui-input-clear" placeholder="请输入" value="bbd52da801">
+				</div>
+				<div class="mui-input-row">
+					<label>接口ID</label>
+					<input id="interfaceId" type="text" class="mui-input-clear" placeholder="请输入" value="12716">
+				</div>
+				<div class="mui-button-row">
+					<button id="OK" type="button" class="mui-btn mui-btn-primary" >确认</button>
+					<button id="cancel" type="button" class="mui-btn mui-btn-danger" >取消</button>
+				</div>
+			</form>
+		</div>
+		<script src="js/mui.js"></script>
+		<script src="js/echarts.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/jquery.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/moment.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/myCharts.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.init()
+			//mui('#inputGroup').popover('toggle');
+			var time=new Array;
+			var value=new Array;
+			mui.plusReady(function () {//应用启动的时候将存储的信息填充到格子上
+			    document.getElementById("appId").value=plus.storage.getItem("appId");
+			    document.getElementById("appKey").value=plus.storage.getItem("appKey");
+			    document.getElementById("userId").value=plus.storage.getItem("userId");
+				document.getElementById("userKey").value=plus.storage.getItem("userKey");
+				document.getElementById("interfaceId").value=plus.storage.getItem("interfaceId");
+			})
+			//将数据保存到本地
+			document.getElementById("OK").addEventListener("click",function(){
+				var appId = document.getElementById("appId").value;
+				var appKey = document.getElementById("appKey").value;
+				var userId = document.getElementById("userId").value;
+				var userKey = document.getElementById("userKey").value;
+				var interfaceId = document.getElementById("interfaceId").value;
+				
+				plus.storage.setItem("appId", appId);
+				plus.storage.setItem("appKey", appKey);
+				plus.storage.setItem("userId", userId);
+				plus.storage.setItem("userKey", userKey);
+				plus.storage.setItem("interfaceId", interfaceId);
+			})
+			//弹出配置信息框框
+			document.getElementById("setInfo").addEventListener("click",function(){
+				mui('#inputGroup').popover('toggle');
+			})
+			//隐藏配置信息框框
+			document.getElementById("cancel").addEventListener("click",function(){
+				mui('#inputGroup').popover('toggle');
+			})
+			//获取历史数据
+			document.getElementById("getInfo").addEventListener("click",function(){
+				myChart.showLoading();
+				var appId = plus.storage.getItem("appId");
+				var appKey = plus.storage.getItem("appKey");
+				var userId = plus.storage.getItem("userId");
+				var userKey = plus.storage.getItem("userKey");
+				var interfaceId = plus.storage.getItem("interfaceId");
+				
+				//从服务器获取历史数据
+				$.post("https://www.bigiot.net/oauth/token",{
+					client_id:appId,
+					client_secret:appKey,
+					username:userId,
+					password:userKey,
+					grant_type:"password"
+				},function(dat){
+					$.get("https://www.bigiot.net/oauth/historydata",{
+						access_token:dat.access_token,
+						id:interfaceId
+					},function(dat){
+						
+						for(var i=0;i<dat.length;i++){
+							time.push(moment( Number(dat[i].time*1000)).format('YYYY-MM-DD HH:mm:ss'))
+							value.push(dat[i].value)
+						}
+						 myChart.setOption({
+							xAxis: {
+								data: time
+							},
+							series: [{
+								// 根据名字对应到相应的系列
+								name: '温度',
+								data: value
+							}]
+						});
+						myChart.hideLoading();
+					})
+				})
+			})			
+			//
+			window.addEventListener('newsId',function(event){
+			  //获得事件参数
+			  var temp = event.detail.temp;
+				value.push(temp)
+				time.push(Date.parse(new Date()))
+				myChart.setOption({
+					xAxis: {
+						data: time
+					},
+					series: [{
+						// 根据名字对应到相应的系列
+						name: '温度',
+						data: value
+					}]
+				});
+			});
+		</script>
+	</body>
+
+</html>

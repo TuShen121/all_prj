@@ -1,4 +1,4 @@
-C51 COMPILER V9.59.0.0   DS18B20                                                           10/14/2019 21:38:38 PAGE 1   
+C51 COMPILER V9.59.0.0   DS18B20                                                           10/27/2019 17:59:09 PAGE 1   
 
 
 C51 COMPILER V9.59.0.0, COMPILATION OF MODULE DS18B20
@@ -62,7 +62,7 @@ line level    source
   51          3ms           3           3           220           +3
   52          Xms           X           3           220           +3     
   53                 (X的范围为2到255)
-C51 COMPILER V9.59.0.0   DS18B20                                                           10/14/2019 21:38:38 PAGE 2   
+C51 COMPILER V9.59.0.0   DS18B20                                                           10/27/2019 17:59:09 PAGE 2   
 
   54          */
   55          
@@ -126,7 +126,7 @@ line level    source
  112   2      }
  113   1      }
  114          
-C51 COMPILER V9.59.0.0   DS18B20                                                           10/14/2019 21:38:38 PAGE 3   
+C51 COMPILER V9.59.0.0   DS18B20                                                           10/27/2019 17:59:09 PAGE 3   
 
  115          
  116          uint Get_Tmp()                   //获取温度get the wenduerature

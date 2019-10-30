@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title></title>
+    <link href="css/mui.min.css" rel="stylesheet"/>
+	<link rel="stylesheet" type="text/css" href="css/tempShow.css"/>
+	<link rel="stylesheet" type="text/css" href="css/block.css"/>
+	<link rel="stylesheet" type="text/css" href="css/switchBufang.css"/>
+	<link rel="stylesheet" type="text/css" href="css/rangeTemp.css"/>
+	<link rel="stylesheet" type="text/css" href="css/peiwangGre.css"/>
+	<link rel="stylesheet" type="text/css" href="css/menu.css"/>
+	<style type="text/css">
+		.mui-backdrop{
+			background-color: rgba(0,0,0,0.7);
+		}
+		/* .mui-content{
+			background-color: white;
+		} */
+	</style>
+</head>
+<body>
+	<header class="mui-bar mui-bar-nav">
+		<h1 class="mui-title">智能家居</h1>
+	</header>
+	
+	<div class="mui-content">
+		<br>
+		<div><h4>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;设备id: <span v-text="devId2"></span></h4></div>
+		<div><h4>设备状态:<span v-text="devStatus"></span></h4></div>
+		<div><h4>本机状态:<span v-text="meStatus"></span></h4></div>
+		<!-- //========================温度显示 -->
+		<canvas id="tempShow"
+				data-width="100" 
+				data-height="400"
+				data-type="linear-gauge"
+				data-value="0"
+				v-bind:data-color-plate="tempColor"
+				v-bind:data-color-plate-end="tempColor"
+		></canvas>
+		<div id="showBtn">
+			<!-- //========================有人 -->
+			<button id="renTi" type="button" v-text="block1" class="mui-btn " v-bind:class='{"mui-btn-danger":block1_class}'></button>
+			<!-- //========================火焰 -->
+			<button id="renTi" type="button" v-text="block2" class="mui-btn " v-bind:class='{"mui-btn-danger":block2_class}'></button>
+			<!-- //========================烟雾 -->
+			<button id="renTi" type="button" v-text="block3" class="mui-btn " v-bind:class='{"mui-btn-danger":block3_class}'></button>
+			<!-- //========================布防 -->
+			<button id="renTi" type="button" v-text="block4" class="mui-btn " v-bind:class='{"mui-btn-danger":block4_class}'></button>
+			<!-- //========================布防开关 -->
+			<div id="mySwitch" class="mui-switch">
+			  <div  class="mui-switch-handle"></div>
+			</div>
+		</div>
+		
+		<!-- //========================温度调节 -->
+		<div id="tempRange" class="mui-input-row mui-input-range">
+			<label >温度阈值: <span v-text="block5"></span></label>
+			<input id="temprange" type="range" min="0" max="100">
+		</div>
+		<!-- //========================配网按钮组-->
+		<div id="peiwangGre">
+			<button type="button" class="mui-btn " v-on:click="showDevMenu()">设备配网</button>
+			<button type="button" class="mui-btn " v-on:click="showMeMenu()">本机登录</button>
+		</div>
+		<!-- //========================设备配网弹出菜单-->
+		<div id="menuDev"  class="mui-popover menu">
+			<form class="mui-input-group">
+				<div class="mui-input-row">
+					<label>wifi名称</label>
+					<input type="text" id="wifiName" class="mui-input-clear" placeholder="请输入内容">
+				</div>
+				<div class="mui-input-row">
+					<label>wifi密码</label>
+					<input type="text" id="wifiPwd" class="mui-input-clear" placeholder="请输入内容">
+				</div>
+				<div class="mui-input-row">
+					<label>设备ID</label>
+					<input type="text" id="devId1" class="mui-input-clear" placeholder="请输入内容">
+				</div>
+				<div class="mui-input-row">
+					<label>设备KEY</label>
+					<input type="text" id="devKey" class="mui-input-clear" placeholder="请输入内容">
+				</div>
+				<div class="mui-button-row">
+					<button type="button" class="mui-btn mui-btn-primary" v-on:click="devOkBtn()" >确认</button>
+					<button type="button" class="mui-btn mui-btn-danger" v-on:click="devGetBtn()">获取</button>
+				</div>
+			</form>
+		</div>
+		<!-- //========================本机登录弹出菜单-->
+		<div id="menuMe"  class="mui-popover menu">
+			<form class="mui-input-group">
+				<div class="mui-input-row">
+					<label>本机ID</label>
+					<input type="text" id="meId" class="mui-input-clear" placeholder="请输入内容">
+				</div>
+				<div class="mui-input-row">
+					<label>本机KEY</label>
+					<input type="text" id="meKey" class="mui-input-clear" placeholder="请输入内容">
+				</div>
+				<div class="mui-input-row">
+					<label>设备ID</label>
+					<input type="text" id="devId2" class="mui-input-clear" placeholder="请输入内容">
+				</div>
+				<div class="mui-button-row">
+					<button type="button" class="mui-btn mui-btn-primary" v-on:click="meLoginBtn()" >登录</button>
+					<button type="button" class="mui-btn mui-btn-danger" v-on:click="meCancleBtn()">取消</button>
+				</div>
+			</form>
+		</div>
+	</div>
+	<script src="js/mui.min.js"></script>
+	<script src="js/gauge.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/vue.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/reconnecting-websocket.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/Mudp.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		
+		mui.init();
+		var ws = new ReconnectingWebSocket('ws://www.bigiot.net:8383');
+		
+		//mui('#menuDev').popover('toggle');//show hide toggle
+		//mui('#menuMe').popover('toggle');//show hide toggle
+		var app = new Vue({
+			el: '.mui-content',
+			data:{
+				devId2:"",
+				devStatus:"未知",
+				meStatus:"未登录",
+				block1:"无人",
+				block2:"无火焰",
+				block3:"无烟雾",
+				block4:"未布防",
+				block5:"0",
+				block1_class:false,
+				block2_class:false,
+				block3_class:false,
+				block4_class:false,
+				tempColor:"#fff"
+				//tempColor:"#dd524d"
+			}
+		})
+		//点击显示设备配网菜单
+		app.showDevMenu=function(){
+			mui('#menuDev').popover('toggle');//设备配网菜单切换显示
+		}
+		//点击显示本机设置菜单菜单
+		app.showMeMenu=function(){
+			mui('#menuMe').popover('toggle');//本机设置菜单菜单切换显示
+		}
+		//点击设备确按钮
+		app.devOkBtn=function(){
+			var wifiName = document.getElementById("wifiName").value;
+			var wifiPwd = document.getElementById("wifiPwd").value;
+			var devId1 = document.getElementById("devId1").value;
+			var devKey = document.getElementById("devKey").value;
+		}
+		//点击设备获取按钮
+		app.devGetBtn=function(){
+			mui('#menuDev').popover('toggle');//设备配网菜单切换显示
+		}
+		//点击本机登录按钮
+		app.meLoginBtn=function(){
+			var meId = document.getElementById("meId").value;
+			var meKey = document.getElementById("meKey").value;
+			var devId2 = document.getElementById("devId2").value;
+			
+			plus.storage.setItem("meId", meId);
+			plus.storage.setItem("meKey", meKey);
+			plus.storage.setItem("devId2", devId2);
+			
+			app.devId2=devId2
+			
+			ws.send('{"M":"checkin","ID":"'+meId+'","K":"'+meKey+'"}')
+		}
+		//点击本机取消按钮
+		app.meCancleBtn=function(){
+			mui('#menuMe').popover('toggle');//设备配网菜单切换显示
+		}
+		var devStatusFlag=false;
+		setInterval(function(){
+			if(devStatusFlag==true){
+				devStatusFlag=false;
+				app.devStatus="已连接"
+			}
+			else{
+				app.devStatus="未知"
+			}
+			var devId2=plus.storage.getItem("devId2");
+			ws.send('{"M":"say","ID":"'+devId2+'","C":"xx","SIGN":"xx3"}')
+		},3000);
+		//等待plus准备好
+		mui.plusReady(function(){
+			//开机的时候将本地保存的数据填充到页面上
+			app.devId2=plus.storage.getItem("devId2");
+			document.getElementById("meId").value=plus.storage.getItem("meId");
+			document.getElementById("meKey").value=plus.storage.getItem("meKey");
+			document.getElementById("devId2").value=plus.storage.getItem("devId2");
+			
+			ws.onmessage=function(msg){
+				var dat = JSON.parse(msg.data);
+				console.log(JSON.stringify(dat))
+				switch(dat.M){
+					case "WELCOME TO BIGIOT"://服务器连接成功就登录服务器
+						var meId=plus.storage.getItem("meId");
+						var meKey=plus.storage.getItem("meKey");
+						ws.send('{"M":"checkin","ID":"'+meId+'","K":"'+meKey+'"}')
+						break;
+					case "ping"://发送心跳包
+						ws.send('{"M":"beat"}');
+						break;
+					case "checkinok"://登录成功
+						app.meStatus="登录成功"
+						break;
+					case "say"://收到消息
+						// printf("%d,",HuoYan);
+						// printf("%d,",YanWu);
+						// printf("%d,",RenTi);
+						// printf("%d,",temperature);
+						// printf("%d,",tempMax);
+						// printf("%d,",buFang);
+						// printf("\r\n");
+						devStatusFlag=true;
+						
+						if(dat.C.split(',')[0]==0){//有火焰
+							app.block2="有火焰"
+							app.block2_class=true
+						}
+						else{
+							app.block2="无火焰"
+							app.block2_class=false
+						}
+						//==================================
+						if(dat.C.split(',')[1]=='0'){//有烟雾
+							app.block3="有烟雾"
+							app.block3_class=true
+						}
+						else{
+							app.block3="无烟雾"
+							app.block3_class=false
+						}
+						//=================================
+						if(dat.C.split(',')[2]=='1'){//有人体
+							app.block1="有人"
+							app.block1_class=true
+						}
+						else{
+							app.block1="无人"
+							app.block1_class=false
+						}
+						//=======================================
+						//当前的温度
+						
+						document.gauges[0].value=dat.C.split(',')[3]/10;
+						if(dat.C.split(',')[3]>app.block5*10)//温度大于阈值
+						{
+							app.tempColor="#dd524d"
+						}
+						else{
+							app.tempColor="#fff"
+						}
+						//=======================================
+						//温度的阈值
+						
+						app.block5 =dat.C.split(',')[4];
+						
+						//====================布防===================
+						//获取开关状态
+						var isActive = document.getElementById("mySwitch").classList.contains("mui-active");
+						if(dat.C.split(',')[5]=='1'){//已布防
+							app.block4="已布防"
+							app.block4_class=true
+							if(!isActive){
+								mui("#mySwitch").switch().toggle();
+							}
+						}
+						else{
+							app.block4="未布防"
+							app.block4_class=false
+							if(isActive){
+								mui("#mySwitch").switch().toggle();
+							}
+						}
+						//====================报警===================
+						if(dat.C.split(',')[6]=='1'){//有人体
+							mui.toast("警报警报")
+							plus.device.beep(1);
+							plus.device.vibrate();
+							plus.push.createMessage( "警报警报","12",{  
+								cover: true,  
+								sound: "system"
+							} );
+						}
+						 
+						break;
+				}
+			}
+			//=====================
+			
+			//开关被点击
+			document.getElementById("mySwitch").addEventListener("toggle",function(event){
+				var devId2=plus.storage.getItem("devId2");
+				var tempChangeDat=document.getElementById("temprange").value;//获取温度滑动条的值
+				if(tempChangeDat<10)tempChangeDat='0'+tempChangeDat;//补齐两位
+				if(event.detail.isActive){
+					var bufangChangeDat='1'
+					ws.send('{"M":"say","ID":"'+devId2+'","C":"'+tempChangeDat+ bufangChangeDat+'","SIGN":"xx3"}')
+				}else{
+					var bufangChangeDat='0'
+					ws.send('{"M":"say","ID":"'+devId2+'","C":"'+tempChangeDat+ bufangChangeDat+'","SIGN":"xx3"}')
+				}
+			})
+			//滑块被滑动
+			document.getElementById("temprange").addEventListener("change",function(){
+				var devId2=plus.storage.getItem("devId2");
+				var tempChangeDat=document.getElementById("temprange").value;//获取温度条的值
+				if(tempChangeDat<10)tempChangeDat='0'+tempChangeDat;//补齐两位
+				//获取开关状态
+				var isActive = document.getElementById("mySwitch").classList.contains("mui-active");
+				if(isActive){
+					var bufangChangeDat='1'
+					ws.send('{"M":"say","ID":"'+devId2+'","C":"'+tempChangeDat+ bufangChangeDat+'","SIGN":"xx3"}')
+				}else{
+					var bufangChangeDat='0'
+					ws.send('{"M":"say","ID":"'+devId2+'","C":"'+tempChangeDat+ bufangChangeDat+'","SIGN":"xx3"}')
+				}
+			})
+		})//mui.plusReady(function()//等待plus准备好
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		</script>
+</body>
+</html>
